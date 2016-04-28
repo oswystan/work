@@ -19,12 +19,17 @@ packages/apps/Camera2
 EOF
 }
 
-dl=`repos`
-for repo in $dl
-do
-    if [ ! -d $repo/.git ]; then
-        echo "$repo"
-        git clone https://android.googlesource.com/platform/$repo $repo
-    fi
-done
+down_load()
+{
+    dl=`repos`
+    for repo in $dl
+    do
+        if [ ! -d $repo/.git ]; then
+            echo "$repo"
+            git clone https://android.googlesource.com/platform/$repo $repo
+        fi
+    done
+}
 
+## main
+down_load
