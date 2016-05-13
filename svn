@@ -1,0 +1,29 @@
+#!/bin/sh -e
+
+##############################################
+## sudo update-rc.d svn defaults
+##############################################
+
+case "$1" in
+    start)
+        svnserve -d -r /home/svn/repo
+        ;;
+    stop)
+        killall svnserve
+        ;;
+    status)
+        c=`ps -ef |grep svnserve|wc -l`
+        if [ $c -lt 2 ]; then
+            exit 1
+        fi
+        ;;
+    restart|force-reload)
+        killall svnserve
+        svnserve -d -r /home/svn/repo
+        ;;
+    *)
+        exit 1
+        ;;
+esac
+
+exit 0
