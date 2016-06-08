@@ -4,10 +4,10 @@
 ## put this file to /etc/init.d/
 ## sudo update-rc.d svn defaults
 ##############################################
-
+repo_dir='/home/svn/repo'
 case "$1" in
     start)
-        svnserve -d -r /home/svn/repo
+        svnserve -d -r $repo_dir
         ;;
     stop)
         killall svnserve
@@ -20,7 +20,7 @@ case "$1" in
         ;;
     restart|force-reload)
         killall svnserve
-        svnserve -d -r /home/svn/repo
+        svnserve -d -r $repo_dir
         ;;
     *)
         exit 1
