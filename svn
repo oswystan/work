@@ -4,7 +4,7 @@
 ## put this file to /etc/init.d/
 ## sudo update-rc.d svn defaults
 ##############################################
-repo_dir='/home/svn/repo'
+repo_dir='/letv/svn_repo'
 case "$1" in
     start)
         svnserve -d -r $repo_dir
