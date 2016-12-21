@@ -4,5 +4,7 @@ adb remount
 mkdir /mnt/dbg
 mount -t debugfs none /mnt/dbg
 
+# get branch info from manifest.xml for each project
+grep revision manifest.xml|while read one; do echo ${one#*revision=}; done|tr -d ' />"' |sort -u
 
 ###############################################################################
