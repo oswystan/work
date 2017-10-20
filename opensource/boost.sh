@@ -9,30 +9,41 @@
 ##
 ###########################################################################
 
-function boost_dl() {
-    echo "##############################################"
-    echo "###########  DOWNLOADING  ####################"
-    echo "##############################################"
-    wget https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.bz2
-    tar jxvf boost_1_65_1.tar.bz2
-}
-function boost_mk() {
-    echo "##############################################"
-    echo "################ BUILDING ####################"
-    echo "##############################################"
-    cur_dir=`pwd`
-    cd boost_1_65_1
-    ./bootstrap.sh --prefix=$cur_dir
-    ./b2 -j4
-    ./b2 install
-    cd $cur_dir
-    echo "##############################################"
-    echo "#################### DONE ####################"
-    echo "##############################################"
+function _start() {
+    echo "==> start $1 ..."
+    echo "-------------------------------------------"
 }
 
+function _end() {
+    if [ $1 -eq 0 ]; then
+        echo "---------------- SUCCESS ------------------"
+        echo ""
+    else
+        echo "**************** FAILED *******************"
+        echo ""
+        exit $1
+    fi
+}
 
+function do_download() {
+    _start "downloading"
+        wget https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.bz2 && \
+        tar jxvf boost_1_65_1.tar.bz2
+    _end $?
+}
+
+function do_mk() {
+    _start "building"
+        cur_dir=`pwd`
+        cd boost_1_65_1 && \
+        ./bootstrap.sh --prefix=$cur_dir && \
+        ./b2 -j4 && \
+        ./b2 install && \
+        cd $cur_dir
+    _end $?
+}
 
 ###########################################################################
-boost_dl
-boost_mk
+do_download
+do_mk
+

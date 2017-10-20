@@ -9,31 +9,42 @@
 ##
 ###########################################################################
 
-function pb_dl() {
-    echo "##############################################"
-    echo "###########  DOWNLOADING  ####################"
-    echo "##############################################"
-    git clone https://github.com/google/protobuf.git
-    cur_dir=`pwd`
-    cd protobuf
-    git checkout -b local_dev v3.4.0
-    cd $cur_dir
+function _start() {
+    echo "==> start $1 ..."
+    echo "-------------------------------------------"
 }
 
-function pb_mk() {
-    echo "##############################################"
-    echo "################ BUILDING ####################"
-    echo "##############################################"
-    cur_dir=`pwd`
-    cd protobuf && \
-        ./autogen.sh && ./configure --prefix=$cur_dir && \
-        make -j4 && make install && \
-    cd $cur_dir
-    echo "##############################################"
-    echo "################### DONE #####################"
-    echo "##############################################"
+function _end() {
+    if [ $1 -eq 0 ]; then
+        echo "---------------- SUCCESS ------------------"
+        echo ""
+    else
+        echo "**************** FAILED *******************"
+        echo ""
+        exit $1
+    fi
+}
+
+function do_download() {
+    _start "downloading"
+        cur_dir=`pwd`
+        git clone https://github.com/google/protobuf.git && \
+        cd protobuf && \
+        git checkout -b local_dev v3.4.0 && \
+        cd $cur_dir
+    _end $?
+}
+
+function do_mk() {
+    _start "building"
+        cur_dir=`pwd`
+        cd protobuf && \
+            ./autogen.sh && ./configure --prefix=$cur_dir && \
+            make -j4 && make install && \
+        cd $cur_dir
+    _end $?
 }
 
 ###########################################################################
-#pb_dl
-pb_mk
+do_download
+do_mk

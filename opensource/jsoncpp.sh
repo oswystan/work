@@ -9,33 +9,44 @@
 ##
 ###########################################################################
 
-function jsoncpp_dl() {
-    echo "##############################################"
-    echo "###########  DOWNLOADING  ####################"
-    echo "##############################################"
-    git clone https://github.com/open-source-parsers/jsoncpp
-    cur_dir=`pwd`
-    cd jsoncpp
-    git checkout -b local_dev 1.0.0
-    cd $cur_dir
+function _start() {
+    echo "==> start $1 ..."
+    echo "-------------------------------------------"
 }
 
-function jsoncpp_mk() {
-    echo "##############################################"
-    echo "################ BUILDING ####################"
-    echo "##############################################"
-    cur_dir=`pwd`
-    cd jsoncpp && \
+function _end() {
+    if [ $1 -eq 0 ]; then
+        echo "---------------- SUCCESS ------------------"
+        echo ""
+    else
+        echo "**************** FAILED *******************"
+        echo ""
+        exit $1
+    fi
+}
+
+function do_download() {
+    _start "downloading"
+        cur_dir=`pwd`
+        git clone https://github.com/open-source-parsers/jsoncpp && \
+        cd jsoncpp && \
+        git checkout -b local_dev 1.0.0 && \
+        cd $cur_dir
+    _end $?
+}
+
+function do_mk() {
+    _start "building"
+        cur_dir=`pwd`
+        cd jsoncpp && \
         mkdir build && \
         cd build && \
         cmake -DCMAKE_BUILD_TYPE=release -DJSONCPP_LIB_BUILD_SHARED=ON -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=$cur_dir .. && \
-        make -j4 && make install
-    cd $cur_dir
-    echo "##############################################"
-    echo "################### DONE #####################"
-    echo "##############################################"
+        make -j4 && make install && \
+        cd $cur_dir
+    _end $?
 }
 
 ###########################################################################
-jsoncpp_dl
-jsoncpp_mk
+do_download
+do_mk

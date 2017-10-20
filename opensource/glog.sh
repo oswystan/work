@@ -9,31 +9,46 @@
 ##
 ###########################################################################
 
-function glog_dl() {
-    echo "##############################################"
-    echo "###########  DOWNLOADING  ####################"
-    echo "##############################################"
-    git clone https://github.com/google/glog
-    cur_dir=`pwd`
-    cd glog
-    git checkout -b local_dev v0.3.5
-    cd $cur_dir
+function _start() {
+    echo "==> start $1 ..."
+    echo "-------------------------------------------"
 }
 
-function glog_mk() {
-    echo "##############################################"
-    echo "################ BUILDING ####################"
-    echo "##############################################"
-    cur_dir=`pwd`
-    cd glog
-    set -eu
-    autoreconf -i
-    ./configure --prefix=$cur_dir
-    make -j4
-    make install
-    cd $cur_dir
+function _end() {
+    if [ $1 -eq 0 ]; then
+        echo "---------------- SUCCESS ------------------"
+        echo ""
+    else
+        echo "**************** FAILED *******************"
+        echo ""
+        exit $1
+    fi
+}
+
+function do_download() {
+    _start "downloading"
+        cur_dir=`pwd`
+        git clone https://github.com/google/glog && \
+        cd glog && \
+        git checkout -b local_dev v0.3.5 && \
+        cd $cur_dir
+    _end $?
+}
+
+function do_mk() {
+    _start "building"
+        cur_dir=`pwd`
+        cd glog && \
+        set -eu && \
+        autoreconf -i && \
+        ./configure --prefix=$cur_dir && \
+        make -j4 && \
+        make install && \
+        cd $cur_dir
+    _end $?
 }
 
 ###########################################################################
-glog_dl
-glog_mk
+do_download
+do_mk
+

@@ -9,31 +9,42 @@
 ##
 ###########################################################################
 
-function hiredis_dl() {
-    echo "##############################################"
-    echo "###########  DOWNLOADING  ####################"
-    echo "##############################################"
-    git clone https://github.com/redis/hiredis
-    cur_dir=`pwd`
-    cd hiredis
-    git checkout -b local_dev v0.13.3
-    cd $cur_dir
+function _start() {
+    echo "==> start $1 ..."
+    echo "-------------------------------------------"
 }
 
-function hiredis_mk() {
-    echo "##############################################"
-    echo "################ BUILDING ####################"
-    echo "##############################################"
-    cur_dir=`pwd`
-    cd hiredis
-    make PREFIX=$cur_dir -j4
-    make PREFIX=$cur_dir install
-    cd $cur_dir
-    echo "##############################################"
-    echo "################### DONE #####################"
-    echo "##############################################"
+function _end() {
+    if [ $1 -eq 0 ]; then
+        echo "---------------- SUCCESS ------------------"
+        echo ""
+    else
+        echo "**************** FAILED *******************"
+        echo ""
+        exit $1
+    fi
+}
+
+function do_download() {
+    _start "downloading"
+        cur_dir=`pwd`
+        git clone https://github.com/redis/hiredis && \
+        cd hiredis && \
+        git checkout -b local_dev v0.13.3 && \
+        cd $cur_dir
+    _end $?
+}
+
+function do_mk() {
+    _start "building"
+        cur_dir=`pwd`
+        cd hiredis && \
+        make PREFIX=$cur_dir -j4 && \
+        make PREFIX=$cur_dir install && \
+        cd $cur_dir
+    _end $?
 }
 
 ###########################################################################
-hiredis_dl
-hiredis_mk
+do_download
+do_mk
