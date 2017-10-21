@@ -15,14 +15,8 @@ function _start() {
 }
 
 function _end() {
-    if [ $1 -eq 0 ]; then
-        echo "---------------- SUCCESS ------------------"
-        echo ""
-    else
-        echo "**************** FAILED *******************"
-        echo ""
-        exit $1
-    fi
+    [[ $1 -ne 0 ]] && printf -- '**************** FAILED *******************\n\n' && exit $1
+    [[ $1 -eq 0 ]] && printf -- '---------------- SUCCESS ------------------\n\n'
 }
 
 function do_download() {
